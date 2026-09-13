@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#f5f2ea">
+  <title>Едим дома — меню на неделю</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <main id="app">
+    <section id="wizard" class="screen">
+      <header class="hero">
+        <div class="logo">Едим<span>дома</span></div>
+        <div class="step-line"><span id="stepText">Шаг 1 из 7</span><div><i id="stepBar"></i></div></div>
+      </header>
+
+      <form id="wizardForm" novalidate>
+        <article class="step active" data-step="0">
+          <p class="eyebrow">Начнём с привычного</p><h1>Где покупаете продукты?</h1><p class="lead">Учтём средний уровень цен сети. Цены ориентировочные, без акций.</p>
+          <div id="stores" class="choice-grid stores"></div>
+        </article>
+
+        <article class="step" data-step="1">
+          <p class="eyebrow">Размер семьи</p><h1>На сколько человек готовим?</h1><p class="lead">Детская порция считается как 65% взрослой.</p>
+          <div class="counter-card"><div><b>Взрослые</b><small>от 1 до 6</small></div><div class="counter"><button type="button" data-count="adults" data-delta="-1">−</button><output id="adultsOut">2</output><button type="button" data-count="adults" data-delta="1">+</button></div></div>
+          <div class="counter-card"><div><b>Дети</b><small>от 0 до 4</small></div><div class="counter"><button type="button" data-count="children" data-delta="-1">−</button><output id="childrenOut">1</output><button type="button" data-count="children" data-delta="1">+</button></div></div>
+        </article>
+
+        <article class="step" data-step="2">
+          <p class="eyebrow">Ритм недели</p><h1>Какие приёмы пищи планировать?</h1><p class="lead">Можно оставить только ужины — список покупок пересчитается.</p>
+          <div class="stack">
+            <label class="switch-card"><span>🥣 <b>Завтраки</b></span><input type="checkbox" name="breakfast" checked><i></i></label>
+            <label class="switch-card"><span>🍲 <b>Обеды</b></span><input type="checkbox" name="lunch" checked><i></i></label>
+            <label class="switch-card"><span>🍽 <b>Ужины</b></span><input type="checkbox" name="dinner" checked><i></i></label>
+            <label class="switch-card accent"><span>♻️ <b>Готовить на два дня</b><small>Меньше времени у плиты</small></span><input type="checkbox" name="batchCooking" checked><i></i></label>
+          </div>
+        </article>
+
+        <article class="step" data-step="3">
+          <p class="eyebrow">Рамки расходов</p><h1>Бюджет на неделю</h1><p class="lead">Приложение подберёт максимально близкое меню.</p>
+          <div class="budget-value"><input id="budget" type="number" min="2500" max="30000" step="500" value="7500"><span>₽</span></div>
+          <input id="budgetRange" class="range" type="range" min="2500" max="30000" step="500" value="7500">
+          <div class="range-label"><span>2 500 ₽</span><span>30 000 ₽</span></div>
+        </article>
+
+        <article class="step" data-step="4">
+          <p class="eyebrow">Без неприятных сюрпризов</p><h1>Что исключить?</h1><p class="lead">Отметьте аллергии и продукты, которые не любите.</p>
+          <div id="exclusions" class="chips"></div>
+        </article>
+
+        <article class="step" data-step="5">
+          <p class="eyebrow">Возможности кухни</p><h1>Какая техника есть?</h1><p class="lead">Плита считается по умолчанию.</p>
+          <div id="equipment" class="choice-grid equipment"></div>
+        </article>
+
+        <article class="step" data-step="6">
+          <p class="eyebrow">Последние штрихи</p><h1>Как любите готовить?</h1>
+          <label class="field"><span>Не дольше</span><select id="maxTime"><option value="30">30 минут</option><option value="60" selected>1 часа</option><option value="90">1,5 часов</option><option value="999">Без ограничения</option></select></label>
+          <label class="field"><span>Вегетарианских ужинов</span><select id="vegDays"><option value="0">Не нужно</option><option value="1" selected>1 в неделю</option><option value="2">2 в неделю</option></select></label>
+          <div class="ready-note"><span>✓</span><div><b>Всё готово</b><small>Меню сохранится только на вашем устройстве.</small></div></div>
+        </article>
+      </form>
+
+      <footer class="wizard-actions"><button id="backBtn" class="ghost" type="button">Назад</button><button id="nextBtn" class="primary" type="button">Далее</button></footer>
+    </section>
+
+    <section id="result" class="screen hidden">
+      <header class="result-header">
+        <div><p class="eyebrow">Ваш план</p><h1>Неделя без вопроса<br>«что приготовить?»</h1></div>
+        <button id="editBtn" class="round" aria-label="Изменить параметры">⚙</button>
+        <div class="budget-card"><div><small>Продукты на неделю</small><strong id="totalCost">0 ₽</strong><span id="budgetStatus"></span></div><div class="donut" id="donut"><b id="budgetPercent">0%</b></div></div>
+        <p class="price-note">≈ ориентировочно, без учёта акций и домашних запасов</p>
+      </header>
+      <nav class="tabs" aria-label="Разделы">
+        <button class="active" data-tab="plan">Меню</button><button data-tab="shopping">Покупки</button><button data-tab="summary">Итоги</button>
+      </nav>
+      <div id="planTab" class="tab-page active"></div>
+      <div id="shoppingTab" class="tab-page"></div>
+      <div id="summaryTab" class="tab-page"></div>
+    </section>
+  </main>
+
+  <dialog id="recipeDialog"><div class="dialog-head"><button id="closeDialog" aria-label="Закрыть">×</button><p class="eyebrow" id="recipeMeal"></p><h2 id="recipeTitle"></h2><div id="recipeMeta" class="recipe-meta"></div></div><div class="dialog-body"><h3>Ингредиенты</h3><ul id="recipeIngredients"></ul><h3>Как приготовить</h3><ol id="recipeSteps"></ol></div></dialog>
+
+  <script src="engine.js"></script><script src="app.js"></script>
+</body>
+</html>
