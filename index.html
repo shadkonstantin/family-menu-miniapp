@@ -57,7 +57,7 @@
 
         <article class="step" data-step="6">
           <p class="eyebrow">Последние штрихи</p><h1>Как любите готовить?</h1>
-          <label class="field"><span>Не дольше</span><select id="maxTime"><option value="30">30 минут</option><option value="60" selected>1 часа</option><option value="90">1,5 часов</option><option value="999">Без ограничения</option></select></label>
+          <label class="field"><span>Активно готовить не дольше</span><select id="maxTime"><option value="30">30 минут</option><option value="60" selected>60 минут</option><option value="90">1,5 часа</option><option value="999">Без ограничения</option></select></label>
           <label class="field"><span>Вегетарианских ужинов</span><select id="vegDays"><option value="0">Не нужно</option><option value="1" selected>1 в неделю</option><option value="2">2 в неделю</option></select></label>
           <div class="ready-note"><span>✓</span><div><b>Всё готово</b><small>Меню сохранится только на вашем устройстве.</small></div></div>
         </article>
@@ -82,7 +82,7 @@
     </section>
   </main>
 
-  <dialog id="recipeDialog"><div class="dialog-head"><button id="closeDialog" aria-label="Закрыть">×</button><p class="eyebrow" id="recipeMeal"></p><h2 id="recipeTitle"></h2><div id="recipeMeta" class="recipe-meta"></div></div><div class="dialog-body"><h3>Ингредиенты</h3><ul id="recipeIngredients"></ul><h3>Как приготовить</h3><ol id="recipeSteps"></ol></div></dialog>
+  <dialog id="recipeDialog"><div class="dialog-head"><button id="closeDialog" aria-label="Закрыть">×</button><p class="eyebrow" id="recipeMeal"></p><h2 id="recipeTitle"></h2><div id="recipeSource" class="recipe-source"></div><div id="recipeMeta" class="recipe-meta"></div></div><div class="dialog-body"><h3>Ингредиенты</h3><ul id="recipeIngredients"></ul><div id="recipeSeasoning"></div><h3>Как приготовить</h3><ol id="recipeSteps"></ol></div></dialog>
 
   <script src="engine.js"></script><script src="app.js"></script>
 </body>
