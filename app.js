@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const E = window.MenuEngine;
+  const S = window.ShoppingShare;
   const tg = window.Telegram?.WebApp;
   if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#f4f1e8'); tg.setBackgroundColor('#f4f1e8'); }
 
@@ -61,8 +62,18 @@
   }
   function renderShopping(){
     const checked=new Set(JSON.parse(localStorage.getItem('familyMenu.checked')||'[]')); const groups=plan.shopping.reduce((acc,x)=>{(acc[x.category]??=[]).push(x);return acc},{});
-    $('#shoppingTab').innerHTML=`<h2 class="section-title">Список покупок</h2>${Object.entries(groups).map(([cat,items])=>`<section class="shopping-group"><h3>${cat}</h3>${items.map(x=>`<label class="shop-item ${checked.has(x.id)?'checked':''}"><input type="checkbox" data-check="${x.id}" ${checked.has(x.id)?'checked':''}><span class="shop-name"><b>${x.name}</b><small>${E.formatQty(x)}</small></span><span class="shop-cost">${money(x.cost)}<small>≈</small></span></label>`).join('')}</section>`).join('')}<p class="fineprint">Также заложено ${money(plan.reserve)} на соль, специи и мелкие расходники.</p>`;
+    $('#shoppingTab').innerHTML=`<h2 class="section-title">Список покупок</h2>${Object.entries(groups).map(([cat,items])=>`<section class="shopping-group"><h3>${cat}</h3>${items.map(x=>`<label class="shop-item ${checked.has(x.id)?'checked':''}"><input type="checkbox" data-check="${x.id}" ${checked.has(x.id)?'checked':''}><span class="shop-name"><b>${x.name}</b><small>${E.formatQty(x)}</small></span><span class="shop-cost">${money(x.cost)}<small>≈</small></span></label>`).join('')}</section>`).join('')}<p class="fineprint">Также заложено ${money(plan.reserve)} на соль, специи и мелкие расходники.</p><div class="shopping-share"><button id="shareShoppingBtn" class="primary" type="button">Передать Гермесу</button><p id="shareShoppingHint">Откроется Telegram: выберите чат Hermes и отправьте готовый список.</p></div>`;
     $$('[data-check]').forEach(el=>el.onchange=()=>{const set=new Set(JSON.parse(localStorage.getItem('familyMenu.checked')||'[]'));el.checked?set.add(el.dataset.check):set.delete(el.dataset.check);localStorage.setItem('familyMenu.checked',JSON.stringify([...set]));el.closest('.shop-item').classList.toggle('checked',el.checked);pulse()});
+    $('#shareShoppingBtn').onclick=shareShopping;
+  }
+  function shareShopping(){
+    const checked=new Set(JSON.parse(localStorage.getItem('familyMenu.checked')||'[]'));
+    const message=S.buildShoppingMessage(plan.shopping,checked,x=>E.formatQty(x));
+    const hint=$('#shareShoppingHint');
+    if(!message){hint.textContent='Все товары уже отмечены — передавать в корзину нечего.';pulse();return}
+    const url=S.buildTelegramShareUrl(message,'https://shadkonstantin.github.io/family-menu-miniapp/');
+    if(tg?.openTelegramLink) tg.openTelegramLink(url); else location.assign(url);
+    pulse();
   }
   function renderSummary(){
     const meals=plan.entries.length,cooks=plan.entries.filter((e,i,a)=>!(profile.batchCooking&&e.dish.batch&&i>0&&a[i-1]?.dish.id===e.dish.id)).length;
