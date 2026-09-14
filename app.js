@@ -10,6 +10,7 @@
   const MEALS={breakfast:['Завтрак','🥣'],lunch:['Обед','🍲'],dinner:['Ужин','🍽']};
   const EXCLUSIONS=[['свинина','Свинина'],['говядина','Говядина'],['курица','Курица'],['рыба','Рыба'],['молоко','Молочное'],['яйца','Яйца'],['глютен','Глютен'],['грибы','Грибы'],['свёкла','Свёкла'],['тыква','Тыква'],['творог','Творог']];
   const EQUIPMENT=[['oven','Духовка','♨️'],['multicooker','Мультиварка','🥘'],['blender','Блендер','🌀'],['meatGrinder','Мясорубка','🥩'],['vacuum','Вакууматор','❄️']];
+  const LIQUIDS=new Set(['milk','kefir','cream','oil','coconutMilk','wine','soySauce','stock']);
   const defaults={store:'monetka',adults:2,children:1,meals:{breakfast:true,lunch:true,dinner:true},batchCooking:true,budget:7500,exclusions:[],equipment:{oven:true,multicooker:false,blender:true,meatGrinder:true,vacuum:true},maxTime:60,vegDays:1};
   let profile=load('familyMenu.profile',defaults), plan=null, step=0;
 
@@ -68,7 +69,7 @@
   }
   function shareShopping(){
     const checked=new Set(JSON.parse(localStorage.getItem('familyMenu.checked')||'[]'));
-    const message=S.buildShoppingMessage(plan.shopping,checked,x=>E.formatQty(x));
+    const message=S.buildShoppingMessage(plan.shopping,checked,x=>S.formatNeededQuantity(x,LIQUIDS.has(x.id)?'ml':'g'));
     const hint=$('#shareShoppingHint');
     if(!message){hint.textContent='Все товары уже отмечены — передавать в корзину нечего.';pulse();return}
     const url=S.buildTelegramShareUrl(message,'https://shadkonstantin.github.io/family-menu-miniapp/');

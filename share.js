@@ -5,6 +5,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, () => {
   'use strict';
 
+  function formatNeededQuantity(item, unit = 'g') {
+    const amount = Math.max(0, Math.round(Number(item?.needed) || 0));
+    if (amount < 1000) return `≈ ${amount} ${unit === 'ml' ? 'мл' : 'г'}`;
+    const value = (amount / 1000).toFixed(2).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
+    return `≈ ${value} ${unit === 'ml' ? 'л' : 'кг'}`;
+  }
+
   function buildShoppingMessage(items, checkedIds, formatQty) {
     const checked = checkedIds instanceof Set ? checkedIds : new Set(checkedIds || []);
     const pending = (items || []).filter(item => !checked.has(item.id));
@@ -26,5 +33,5 @@
     return url.toString();
   }
 
-  return { buildShoppingMessage, buildTelegramShareUrl };
+  return { formatNeededQuantity, buildShoppingMessage, buildTelegramShareUrl };
 });

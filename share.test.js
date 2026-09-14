@@ -1,6 +1,11 @@
 const assert = require('node:assert/strict');
 const S = require('./share.js');
 
+assert.equal(S.formatNeededQuantity({needed:95},'g'),'≈ 95 г');
+assert.equal(S.formatNeededQuantity({needed:1590},'g'),'≈ 1,59 кг');
+assert.equal(S.formatNeededQuantity({needed:1176},'ml'),'≈ 1,18 л');
+assert.equal(S.formatNeededQuantity({needed:530},'ml'),'≈ 530 мл');
+
 const items = [
   {id:'milk', name:'Молоко', qty:'2 уп.'},
   {id:'eggs', name:'Яйца', qty:'10 шт.'},
